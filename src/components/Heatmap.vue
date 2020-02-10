@@ -368,7 +368,7 @@ export default {
         ygroup
           .append("text")
           .attr("class", "heatmap--year-label label")
-          .attr("transform", `translate(${yearColumnCenter},-40)`)
+          .attr("transform", `translate(${yearColumnCenter},-38)`)
           .style("font-weight", "100")
           .style("font-size", "16px")
           .style("text-align", "center")
