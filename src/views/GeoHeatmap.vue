@@ -34,43 +34,10 @@
         :allIncidents="allIncidents"
         :boxSelectedIncidents="boxSelectedIncidents"
         :incidentType="incidentType"
+        :allSummary="allSummary"
         @selected="updateSelection"
       >
       </heatmap>
-      <div class="sumvis--summary">
-        <stackedbar
-          :chartData="allSummary.yearly"
-          :width="170"
-          :height="220"
-          title="All"
-        >
-        </stackedbar>
-        <article class="sumvis--description is-half">
-          <p>
-            Vision Zero is a multi-national initiative that aims to eliminate
-            serious or fatal traffic incidents by 2030. This visualization shows
-            all the serious incidents that occurred in Boston, MA
-            {{ yearRange }} using the data provided by
-            <a href="https://data.boston.gov/dataset/vision-zero-crash-records"
-              >data.boston.gov</a
-            >.
-          </p>
-          <br />
-          <p>
-            This interactive visualization capability shows geographic and
-            temporal hotspots where many of these incidents occur.
-          </p>
-          <br />
-          <p>
-            Using the incident type filter, places where serious incidents
-            involving pedestrian or bicycle can be focused on. Using the
-            calendar chart, incidents that occure at certain hour, in certain
-            month, or at certain hour across all years can be highlighted in the
-            map view.
-          </p>
-          <br />
-        </article>
-      </div>
     </div>
   </div>
 </template>
@@ -81,11 +48,10 @@ import d3hexgrid from "d3-hexgrid";
 import topojson from "topojson";
 import simpleheat from "simpleheat";
 import Heatmap from "@/components/Heatmap.vue";
-import Stackedbar from "@/components/Stackedbar";
 
 export default {
   name: "GeoHeatmap",
-  components: { Heatmap, Stackedbar },
+  components: { Heatmap },
   props: [
     "neighborhoods",
     "stations",
@@ -97,9 +63,9 @@ export default {
   ],
   data() {
     return {
-      height: 900,
-      width: 1000,
-      rightClip: 220,
+      height: 800,
+      width: 900,
+      rightClip: 200,
 
       heatmapData: undefined,
 
@@ -394,26 +360,6 @@ export default {
     top: 40px;
     z-index: 200;
     font-weight: 100;
-  }
-}
-.sumvis {
-  &--container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  &--summary {
-    display: flex;
-    flex-direction: row;
-    padding-top: 50px;
-    margin-left: 30px;
-  }
-  &--description {
-    padding-top: 10px;
-    padding-left: 6px;
-    padding-right: 160px;
-    text-align: justify;
-    overflow: auto;
   }
 }
 </style>

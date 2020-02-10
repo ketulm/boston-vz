@@ -33,7 +33,6 @@ export default {
       deep: true,
       handler() {
         this.updateDonutChart();
-        console.log(this.chartData);
       }
     }
   },

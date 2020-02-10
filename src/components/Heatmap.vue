@@ -1,50 +1,85 @@
 <template>
-  <div class="heatmap is-flex" ref="heatmap">
-    <div class="heatmap--svg-container is-flex">
-      <svg
-        class="heatmap--svg"
-        ref="heatmapSvg"
-        :height="chartHeight"
-        :width="chartWidth"
-      ></svg>
-      <barchart
-        type="months"
-        :vertical="false"
-        :margin="margin"
-        :chartData="stats.month"
-        :barHeight="barHeight"
-        :barWidth="cellHeight"
-        :chartHeight="chartWidth"
-        :selected="selected"
-      >
-      </barchart>
-      <div
-        class="selection--subtitle has-text-right"
-        :style="{ 'padding-right': margin.right + 'px' }"
-      >
-        <span v-show="selected.incidents > 0">
-          {{ selected.incidents }} incidents selected
-        </span>
+  <div class="heatmap" ref="heatmap">
+    <div class="heatmap--vis">
+      <div class="heatmap--svg-container is-flex">
+        <svg
+          class="heatmap--svg"
+          ref="heatmapSvg"
+          :height="chartHeight"
+          :width="chartWidth"
+        ></svg>
+        <barchart
+          type="months"
+          :vertical="false"
+          :margin="margin"
+          :chartData="stats.month"
+          :barHeight="barHeight"
+          :barWidth="cellHeight"
+          :chartHeight="chartWidth"
+          :selected="selected"
+        >
+        </barchart>
+        <div
+          class="selection--subtitle has-text-right"
+          :style="{ 'padding-right': margin.right + 'px' }"
+        >
+          <span v-show="selected.incidents > 0">
+            {{ selected.incidents }} incidents selected
+          </span>
+        </div>
+      </div>
+      <div class="heatmap--right-container">
+        <barchart
+          type="hours"
+          :vertical="true"
+          :margin="margin"
+          :chartData="stats.hour"
+          :barHeight="cellHeight"
+          :barWidth="barHeight"
+          :chartHeight="chartHeight"
+          :selected="selected"
+        >
+        </barchart>
+        <svg
+          class="heatmap--legendsvg"
+          ref="heatmapLegend"
+          :height="chartHeight"
+          :width="legendWidth + legendMargin.left"
+        ></svg>
       </div>
     </div>
-    <div>
-      <barchart
-        type="hours"
-        :vertical="true"
-        :margin="margin"
-        :chartData="stats.hour"
-        :barHeight="cellHeight"
-        :barWidth="barHeight"
-        :chartHeight="chartHeight"
-        :selected="selected"
+    <div class="sumvis--summary">
+      <stackedbar
+        :chartData="allSummary.yearly"
+        :width="170"
+        :height="220"
+        title="All"
       >
-      </barchart>
-      <svg
-        class="heatmap--legendsvg"
-        ref="heatmapLegend"
-        :height="chartHeight"
-        :width="legendWidth + legendMargin.left"
-      ></svg>
+      </stackedbar>
+      <article class="sumvis--description is-half">
+        <p>
+          Vision Zero is a multi-national initiative that aims to eliminate
+          serious or fatal traffic incidents by 2030. This visualization shows
+          all the serious incidents that occurred in Boston, MA
+          {{ yearRange }} using the data provided by
+          <a href="https://data.boston.gov/dataset/vision-zero-crash-records"
+            >data.boston.gov</a
+          >.
+        </p>
+        <br />
+        <p>
+          This interactive visualization capability shows geographic and
+          temporal hotspots where many of these incidents occur.
+        </p>
+        <br />
+        <p>
+          Using the incident type filter, places where serious incidents
+          involving pedestrian or bicycle can be focused on. Using the calendar
+          chart, incidents that occure at certain hour, in certain month, or at
+          certain hour across all years can be highlighted in the map view.
+        </p>
+        <br />
+      </article>
     </div>
   </div>
 </template>
@@ -54,15 +89,16 @@ import { HOURS, MONTHS } from "@/data/constants";
 import utils from "@/utils";
 import * as d3 from "d3";
 import Barchart from "@/components/Barchart";
+import Stackedbar from "@/components/Stackedbar";
 export default {
   name: "heatmap",
-  props: ["allIncidents", "boxSelectedIncidents", "incidentType"],
-  components: { Barchart },
+  props: ["allIncidents", "boxSelectedIncidents", "incidentType", "allSummary"],
+  components: { Barchart, Stackedbar },
   data() {
     return {
-      cellWidth: 15,
-      cellHeight: 15,
-      barHeight: 30,
+      cellWidth: 13,
+      cellHeight: 13,
+      barHeight: 25,
 
       margin: {
         bottom: 2,
@@ -562,12 +598,13 @@ export default {
 <style lang="scss">
 .heatmap {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex: 0;
+  flex-wrap: nowrap;
 
   opacity: 0;
   transition: opacity 1s;
-  margin-top: 45px;
+  margin-top: 35px;
 
   &__visible {
     opacity: 1;
@@ -580,6 +617,17 @@ export default {
   }
   &--svg-container {
     flex-direction: column;
+  }
+  &--right-container {
+    flex-wrap: nowrap;
+    min-width: 120px;
+  }
+  &--vis {
+    display: flex;
+    flex-direction: row;
+    flex: 0;
+    flex-wrap: nowrap;
+    justify-content: center;
   }
 }
 .hour {
@@ -596,5 +644,24 @@ export default {
 .selection--subtitle {
   padding-top: 1rem;
   height: 40px;
+}
+.sumvis {
+  &--container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  &--summary {
+    display: flex;
+    flex-direction: row;
+    padding-top: 30px;
+    margin-left: 30px;
+  }
+  &--description {
+    padding-left: 6px;
+    padding-right: 100px;
+    text-align: justify;
+    overflow: auto;
+  }
 }
 </style>

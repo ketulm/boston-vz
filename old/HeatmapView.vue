@@ -101,7 +101,6 @@ export default {
       heat.draw(0.05);
     },
     visionZero() {
-      console.log("plotting vision zero");
       this.visionZero.forEach(d => {
         d.coords = projection([+d[9], +d[8]]);
       });

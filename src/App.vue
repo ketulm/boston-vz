@@ -131,7 +131,7 @@ export default {
       bike: "Bike",
       ped: "Pedestrian"
     };
-    console.log("Retrieved Incidents Data", summary);
+    console.log("Retrieved Incidents Data");
 
     if (this.animate) {
       this.updateInterval = setInterval(() => {

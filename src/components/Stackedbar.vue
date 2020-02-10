@@ -40,7 +40,6 @@ export default {
       deep: true,
       handler() {
         this.updateBarChart();
-        console.log(this.chartData);
       }
     }
   },
@@ -98,7 +97,6 @@ export default {
         .attr("width", x.bandwidth())
         .append("title")
         .text(d => {
-          console.log(d);
           let n = d[1] - d[0];
           let title = this.chartData.titles[d.key];
           return `${n} ${title} incidents in ${d.data.name}`;
