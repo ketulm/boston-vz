@@ -89,16 +89,6 @@ export default {
       selectedIncidents: []
     };
   },
-  computed: {
-    yearRange() {
-      if (this.allSummary && this.allSummary.yearly) {
-        return `from ${this.allSummary.yearly[0].name} to ${
-          this.allSummary.yearly[this.allSummary.yearly.length - 1].name
-        }`;
-      }
-      return "from 2015 to 2020";
-    }
-  },
   watch: {
     neighborhoods() {
       this.createMapVis();

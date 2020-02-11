@@ -62,7 +62,9 @@
           serious or fatal traffic incidents by 2030. This visualization shows
           all the serious incidents that occurred in Boston, MA
           {{ yearRange }} using the data provided by
-          <a href="https://data.boston.gov/dataset/vision-zero-crash-records"
+          <a
+            href="https://data.boston.gov/dataset/vision-zero-crash-records"
+            target="_blank"
             >data.boston.gov</a
           >.
         </p>
@@ -187,6 +189,14 @@ export default {
     },
     legendHeight() {
       return this.cellHeight * 1.5;
+    },
+    yearRange() {
+      if (this.allSummary && this.allSummary.yearly) {
+        return `from ${this.allSummary.yearly[0].name} to ${
+          this.allSummary.yearly[this.allSummary.yearly.length - 1].name
+        }`;
+      }
+      return "from 2015 to 2020";
     }
   },
   methods: {
@@ -276,19 +286,22 @@ export default {
       this.$set(this.stats.month, "totals", totalsByMonth.flat());
       this.$set(this.stats.hour, "totals", totalByHour.flat());
     },
-    selectByHour(hour) {
+    selectByHour(hr) {
       this.selected.year = undefined;
       this.selected.month = undefined;
-      this.selected.hour = hour;
+      this.selected.hour = hr;
       this.selected.type = "hour";
       let selected = [];
       this.nested.forEach(year => {
         year.values.forEach(month => {
-          if (month.values[this.selected.hour])
-            selected.push(...month.values[this.selected.hour].values);
+          month.values.forEach(hour => {
+            if (hour.key == hr) {
+              selected.push(...hour.values);
+            }
+          });
         });
       });
-      this.selected.incidents = this.stats.hour.totals[hour].total;
+      this.selected.incidents = selected.length;
       this.$emit("selected", { selected, type: "hour" });
     },
     selectByMonth(year, month) {
@@ -301,9 +314,6 @@ export default {
         selected.push(...hour.values);
       });
       this.selected.incidents = selected.length;
-      this.selected.incidents = this.stats.month.totals[
-        this.selected.month
-      ].total;
       this.$emit("selected", { selected, type: "month" });
     },
     createScale() {
@@ -377,7 +387,7 @@ export default {
           .style("text-anchor", "middle")
           .text(year.key)
           .append("title")
-          .text(`Incidents from year ${year.key}`);
+          .text(`${year.total} incidents in year ${year.key}`);
         ygroup
           .append("rect")
           .attr("class", "heatmap--column-sep")
@@ -450,6 +460,7 @@ export default {
                   selected: hour.values,
                   type: "single"
                 });
+                $view.selected.type = "single";
                 $view.selected.incidents = hour.values.length;
               })
               .append("title")
@@ -610,9 +621,11 @@ export default {
     opacity: 1;
   }
   &--hour-label,
-  &--month-label,
-  &--year-label {
+  &--month-label {
     cursor: pointer;
+    user-select: none;
+  }
+  &--year-label {
     user-select: none;
   }
   &--svg-container {
@@ -631,6 +644,7 @@ export default {
   }
 }
 .hour {
+  cursor: pointer;
   &__selected,
   &__hovered {
     stroke: #288be4;
