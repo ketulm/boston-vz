@@ -404,7 +404,15 @@ export default {
           .style("fill", "#aaa")
           .style("opacity", 0.9);
 
-        year.values.forEach((month, m) => {
+        //year.values.forEach((month, m) => {
+        this.months.forEach((monthName, m) => {
+          let mi = m + 1;
+          let month = year.values.find(d => d.key == mi) || {
+            key: mi,
+            values: [],
+            total: 0
+          };
+
           let monthKey = +month.key;
           let mx = (monthKey - 1) * this.cellWidth;
           let mgroup = ygroup
