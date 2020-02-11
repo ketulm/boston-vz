@@ -254,22 +254,29 @@ export default {
         total: 0
       }));
 
-      // compute total by month
-      let totalsByMonth = this.nested.map(year => {
-        return year.values.map(month => {
-          let monthKey = MONTHS[+month.key];
+      let totalsByMonth = this.nested
+        .map(year => {
+          return this.months.map((m, i) => {
+            return {
+              year: year.key,
+              month: i + 1,
+              key: `${m} ${year.key}`,
+              class: `month-total month-${i + 1} year-${year.key}`,
+              total: 0
+            };
+          });
+        })
+        .flat();
 
+      // compute total by month
+      this.nested.map((year, y) => {
+        year.values.map(month => {
+          let monthKey = MONTHS[+month.key];
           month.values.forEach(hour => {
             totalByHour[+hour.key].total += hour.total;
           });
-
-          return {
-            year: year.key,
-            month: month.key,
-            key: `${monthKey} ${year.key}`,
-            class: `month-total month-${month.key} year-${year.key}`,
-            total: month.total
-          };
+          let mi = y * 12 + (+month.key - 1);
+          totalsByMonth[mi].total = month.total;
         });
       });
 
@@ -398,7 +405,8 @@ export default {
           .style("opacity", 0.9);
 
         year.values.forEach((month, m) => {
-          let mx = m * this.cellWidth;
+          let monthKey = +month.key;
+          let mx = (monthKey - 1) * this.cellWidth;
           let mgroup = ygroup
             .append("g")
             .attr("class", d => `month month-${month.key}`)
